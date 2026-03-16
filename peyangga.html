@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Larutan Penyangga — Kimia Kelas XI</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #00c9a7;
+    --teal-dim: #00927a;
+    --blue: #2d6cdf;
+    --navy: #0d1b3e;
+    --navy-mid: #162447;
+    --navy-light: #1e3460;
+    --acid: #b5ff6d;
+    --orange: #ff8c42;
+    --red: #ff4d6d;
+    --cream: #f0ede6;
+    --text: #e8e4da;
+    --muted: #8899aa;
+    --card: rgba(255,255,255,0.04);
+    --card-border: rgba(255,255,255,0.09);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 10%, rgba(0,201,167,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 10% 80%, rgba(45,108,223,0.14) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 60% 90%, rgba(181,255,109,0.06) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,27,62,0.88);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--card-border);
+    padding: 0 2rem;
+    display: flex; align-items: center; gap: 0;
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.1rem;
+    color: var(--teal);
+    padding: 1rem 1.5rem 1rem 0;
+    border-right: 1px solid var(--card-border);
+    margin-right: 1rem;
+    white-space: nowrap;
+  }
+  .nav-links { display: flex; gap: 0; overflow-x: auto; flex: 1; }
+  .nav-links::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 500;
+    padding: 1.1rem 1rem;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color .2s, border-color .2s;
+    position: relative;
+  }
+  .nav-btn.active, .nav-btn:hover { color: var(--teal); }
+  .nav-btn.active { border-bottom-color: var(--teal); }
+
+  /* ── SECTIONS ── */
+  section { display: none; position: relative; z-index: 1; }
+  section.active { display: block; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 92vh;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(0,201,167,0.12); border: 1px solid rgba(0,201,167,0.3);
+    border-radius: 100px; padding: 0.4rem 1rem;
+    font-size: 0.78rem; font-weight: 500; color: var(--teal);
+    margin-bottom: 2rem; letter-spacing: 0.05em; text-transform: uppercase;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 8vw, 6rem);
+    font-weight: 800; line-height: 1.0;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  .hero h1 span { color: var(--teal); }
+  .hero p {
+    max-width: 560px; color: var(--muted);
+    font-size: 1.1rem; line-height: 1.7;
+    margin: 0 auto 3rem;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+  .hero-cards {
+    display: flex; flex-wrap: wrap; gap: 1rem;
+    justify-content: center;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+  .hero-card {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: var(--radius); padding: 1.5rem;
+    width: 200px; cursor: pointer;
+    transition: transform .25s, border-color .25s, background .25s;
+    text-align: left;
+  }
+  .hero-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--teal);
+    background: rgba(0,201,167,0.07);
+  }
+  .hero-card-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+  .hero-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem; font-weight: 700;
+    color: var(--text); margin-bottom: 0.3rem;
+  }
+  .hero-card p { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+
+  /* ── CONTENT WRAPPER ── */
+  .content { max-width: 900px; margin: 0 auto; padding: 3rem 2rem 6rem; }
+  .content h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 800; margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+  .content h2 .accent { color: var(--teal); }
+  .section-intro {
+    color: var(--muted); font-size: 1rem;
+    margin-bottom: 2.5rem; line-height: 1.7;
+    border-left: 3px solid var(--teal);
+    padding-left: 1rem;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: var(--radius); padding: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  .card h3 {
+    font-family: 'Syne', sans-serif; font-size: 1.1rem;
+    font-weight: 700; margin-bottom: 1rem;
+    color: var(--text);
+  }
+  .card p, .card li {
+    color: var(--muted); font-size: 0.95rem; line-height: 1.75;
+  }
+  .card ul, .card ol { padding-left: 1.4rem; }
+  .card li { margin-bottom: 0.4rem; }
+
+  /* ── TAG CHIPS ── */
+  .chip {
+    display: inline-block;
+    padding: 0.2rem 0.7rem; border-radius: 100px;
+    font-size: 0.75rem; font-weight: 600;
+    margin: 0.2rem;
+  }
+  .chip-acid { background: rgba(255,77,109,0.15); color: #ff4d6d; border: 1px solid rgba(255,77,109,0.3); }
+  .chip-base { background: rgba(45,108,223,0.15); color: #6ea8fe; border: 1px solid rgba(45,108,223,0.3); }
+  .chip-eq   { background: rgba(181,255,109,0.12); color: #b5ff6d; border: 1px solid rgba(181,255,109,0.3); }
+
+  /* ── FORMULA BOX ── */
+  .formula-box {
+    background: rgba(0,201,167,0.07);
+    border: 1px solid rgba(0,201,167,0.25);
+    border-radius: var(--radius-sm);
+    padding: 1.25rem 1.5rem;
+    margin: 1rem 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 1rem; color: var(--cream);
+    text-align: center;
+  }
+  .formula-box .formula-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem; color: var(--teal);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    display: block; margin-bottom: 0.5rem;
+  }
+
+  /* ── REACTION TABLE ── */
+  .rxn-table {
+    width: 100%; border-collapse: collapse;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem; margin: 1rem 0;
+  }
+  .rxn-table th {
+    background: rgba(0,201,167,0.1);
+    color: var(--teal); font-size: 0.72rem;
+    text-transform: uppercase; letter-spacing: 0.07em;
+    padding: 0.6rem 1rem; text-align: left;
+  }
+  .rxn-table td {
+    padding: 0.55rem 1rem; color: var(--text);
+    border-bottom: 1px solid var(--card-border);
+  }
+  .rxn-table tr:last-child td { border-bottom: none; }
+
+  /* ── TOGGLE PANELS ── */
+  .toggle-group { margin-bottom: 1rem; }
+  .toggle-btn {
+    width: 100%; background: var(--card); border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm); padding: 1rem 1.25rem;
+    color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem; font-weight: 500;
+    text-align: left; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: border-color .2s, background .2s;
+  }
+  .toggle-btn:hover { border-color: var(--teal); }
+  .toggle-btn .arrow { transition: transform .3s; color: var(--teal); font-size: 1.1rem; }
+  .toggle-btn.open .arrow { transform: rotate(180deg); }
+  .toggle-content {
+    background: rgba(255,255,255,0.02); border: 1px solid var(--card-border);
+    border-top: none; border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    padding: 0 1.25rem; max-height: 0; overflow: hidden;
+    transition: max-height .4s ease, padding .3s;
+  }
+  .toggle-content.open { max-height: 800px; padding: 1.25rem; }
+  .toggle-content p, .toggle-content li {
+    color: var(--muted); font-size: 0.9rem; line-height: 1.75;
+  }
+  .toggle-content ul { padding-left: 1.2rem; }
+  .toggle-content li { margin-bottom: 0.35rem; }
+
+  /* ── pH SIMULATOR ── */
+  .sim-wrapper {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: var(--radius); padding: 2rem; margin-bottom: 1.5rem;
+  }
+  .sim-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .sim-col { flex: 1; min-width: 200px; }
+  label.sim-label {
+    display: block; font-size: 0.78rem; color: var(--teal);
+    text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.5rem;
+  }
+  .sim-select, .sim-input {
+    width: 100%; background: rgba(255,255,255,0.06);
+    border: 1px solid var(--card-border); border-radius: 8px;
+    color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; padding: 0.65rem 1rem;
+    outline: none; transition: border-color .2s;
+    -webkit-appearance: none;
+  }
+  .sim-select:focus, .sim-input:focus { border-color: var(--teal); }
+  .sim-select option { background: var(--navy-mid); }
+  .sim-btn {
+    background: var(--teal); border: none; border-radius: 8px;
+    color: var(--navy); font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 0.9rem; padding: 0.7rem 1.5rem;
+    cursor: pointer; transition: background .2s, transform .15s;
+  }
+  .sim-btn:hover { background: var(--teal-dim); transform: translateY(-1px); }
+
+  .ph-result {
+    background: rgba(0,201,167,0.06);
+    border: 1px solid rgba(0,201,167,0.2);
+    border-radius: var(--radius-sm); padding: 1.5rem;
+    text-align: center; margin-top: 1rem; display: none;
+  }
+  .ph-result.show { display: block; animation: fadeUp 0.3s ease; }
+  .ph-value {
+    font-family: 'Syne', sans-serif; font-size: 3.5rem;
+    font-weight: 800; line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .ph-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .ph-bar-wrap { margin: 1.2rem auto; max-width: 400px; }
+  .ph-bar-track {
+    height: 12px; border-radius: 100px;
+    background: linear-gradient(to right,
+      #ff1a1a 0%, #ff6600 14%, #ffcc00 28%, #99ff00 42%,
+      #00ff99 50%, #00ccff 64%, #0066ff 78%, #9900ff 100%);
+    position: relative; overflow: visible;
+  }
+  .ph-indicator {
+    position: absolute; top: 50%;
+    width: 20px; height: 20px;
+    background: white; border: 3px solid var(--navy);
+    border-radius: 50%; transform: translate(-50%, -50%);
+    transition: left 0.5s cubic-bezier(.34,1.56,.64,1);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.2);
+  }
+  .ph-steps {
+    text-align: left; margin-top: 1.5rem;
+    border-top: 1px solid var(--card-border);
+    padding-top: 1.2rem;
+  }
+  .ph-steps h4 {
+    font-family: 'Syne', sans-serif; font-size: 0.85rem;
+    color: var(--teal); margin-bottom: 0.8rem;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .step-line {
+    font-size: 0.85rem; color: var(--muted); line-height: 1.8;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── QUIZ ── */
+  .quiz-progress {
+    display: flex; gap: 0.5rem; margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  .q-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--card-border); transition: background .3s;
+  }
+  .q-dot.done { background: var(--teal); }
+  .q-dot.wrong { background: var(--red); }
+
+  .quiz-card {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: var(--radius); padding: 2rem;
+    animation: fadeUp 0.3s ease;
+  }
+  .quiz-meta {
+    font-size: 0.75rem; color: var(--teal);
+    text-transform: uppercase; letter-spacing: 0.07em;
+    margin-bottom: 0.75rem; font-weight: 600;
+  }
+  .quiz-q {
+    font-size: 1.05rem; color: var(--text);
+    line-height: 1.65; margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+  .quiz-opts { display: flex; flex-direction: column; gap: 0.75rem; }
+  .quiz-opt {
+    background: rgba(255,255,255,0.04); border: 1px solid var(--card-border);
+    border-radius: 10px; padding: 0.85rem 1.2rem;
+    color: var(--muted); font-size: 0.9rem;
+    cursor: pointer; display: flex; align-items: flex-start; gap: 0.75rem;
+    transition: border-color .2s, background .2s, color .2s;
+  }
+  .quiz-opt:hover:not(.selected):not(.correct):not(.wrong-opt) {
+    border-color: rgba(0,201,167,0.4); background: rgba(0,201,167,0.05);
+    color: var(--text);
+  }
+  .quiz-opt .opt-key {
+    flex-shrink: 0; width: 22px; height: 22px; border-radius: 6px;
+    background: var(--card-border); display: flex; align-items: center;
+    justify-content: center; font-size: 0.72rem; font-weight: 700;
+    color: var(--muted); font-family: 'Syne', sans-serif;
+  }
+  .quiz-opt.correct { border-color: var(--teal); background: rgba(0,201,167,0.1); color: var(--text); }
+  .quiz-opt.correct .opt-key { background: var(--teal); color: var(--navy); }
+  .quiz-opt.wrong-opt { border-color: var(--red); background: rgba(255,77,109,0.08); }
+
+  .quiz-feedback {
+    margin-top: 1.2rem; padding: 1rem 1.25rem;
+    border-radius: 10px; font-size: 0.88rem; line-height: 1.65;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; animation: fadeUp 0.3s ease; }
+  .quiz-feedback.correct-fb { background: rgba(0,201,167,0.08); border: 1px solid rgba(0,201,167,0.25); color: var(--cream); }
+  .quiz-feedback.wrong-fb { background: rgba(255,77,109,0.08); border: 1px solid rgba(255,77,109,0.25); color: var(--cream); }
+
+  .quiz-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 1.5rem; gap: 1rem; flex-wrap: wrap;
+  }
+  .quiz-btn {
+    background: var(--teal); border: none; border-radius: 8px;
+    color: var(--navy); font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 0.85rem; padding: 0.65rem 1.4rem;
+    cursor: pointer; transition: opacity .2s, transform .15s;
+  }
+  .quiz-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+  .quiz-btn.secondary {
+    background: transparent; color: var(--muted);
+    border: 1px solid var(--card-border);
+  }
+  .quiz-counter { font-size: 0.8rem; color: var(--muted); }
+  .quiz-score-wrap {
+    text-align: center; padding: 3rem 2rem;
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+  }
+  .quiz-score-num {
+    font-family: 'Syne', sans-serif; font-size: 4rem;
+    font-weight: 800; color: var(--teal); line-height: 1;
+  }
+  .quiz-score-wrap p { color: var(--muted); margin: 1rem 0 1.5rem; }
+
+  /* ── GLOSSARY ── */
+  .gloss-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+  .gloss-item {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm); padding: 1.25rem;
+  }
+  .gloss-term {
+    font-family: 'Syne', sans-serif; font-weight: 700;
+    color: var(--teal); font-size: 0.95rem; margin-bottom: 0.5rem;
+  }
+  .gloss-def { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .sim-col { min-width: 100%; }
+    .hero-card { width: 160px; }
+  }
+
+  /* ── INLINE HIGHLIGHT ── */
+  .hl { color: var(--teal); font-weight: 600; }
+  .hl-orange { color: var(--orange); font-weight: 600; }
+  .hl-acid { color: #ff4d6d; font-weight: 600; }
+  .hl-base { color: #6ea8fe; font-weight: 600; }
+
+  /* ── CONCEPT MAP ── */
+  .map-wrap {
+    position: relative; padding: 2rem 0;
+    display: flex; flex-direction: column; align-items: center; gap: 0;
+  }
+  .map-center {
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+    border-radius: 12px; padding: 1rem 2rem;
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    color: var(--navy); font-size: 1.1rem;
+    box-shadow: 0 0 30px rgba(0,201,167,0.3);
+  }
+  .map-row {
+    display: flex; gap: 2rem; margin-top: 2rem; flex-wrap: wrap; justify-content: center;
+  }
+  .map-node {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 10px; padding: 0.85rem 1.25rem;
+    font-size: 0.85rem; font-weight: 500; color: var(--text);
+    text-align: center; position: relative;
+  }
+  .map-node::before {
+    content: '';
+    position: absolute; top: -2rem; left: 50%;
+    width: 1px; height: 2rem; background: var(--card-border);
+  }
+  .map-node.acid-node { border-color: rgba(255,77,109,0.4); }
+  .map-node.base-node { border-color: rgba(100,148,255,0.4); }
+
+  /* ── THINK BOX ── */
+  .think-box {
+    background: rgba(255,140,66,0.07); border: 1px solid rgba(255,140,66,0.25);
+    border-radius: var(--radius-sm); padding: 1.25rem 1.5rem;
+    margin: 1.25rem 0;
+    display: flex; gap: 1rem; align-items: flex-start;
+  }
+  .think-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .think-content { flex: 1; }
+  .think-content strong {
+    display: block; font-family: 'Syne', sans-serif;
+    font-size: 0.82rem; color: var(--orange);
+    text-transform: uppercase; letter-spacing: 0.06em;
+    margin-bottom: 0.4rem;
+  }
+  .think-content p { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">⚗️ Larutan Penyangga</div>
+  <div class="nav-links">
+    <button class="nav-btn active" onclick="showSection('home', this)">🏠 Beranda</button>
+    <button class="nav-btn" onclick="showSection('konsep', this)">📖 Konsep Dasar</button>
+    <button class="nav-btn" onclick="showSection('jenis', this)">🧪 Jenis & Prinsip</button>
+    <button class="nav-btn" onclick="showSection('perhitungan', this)">🔢 Perhitungan pH</button>
+    <button class="nav-btn" onclick="showSection('kalkulator', this)">🖩 Kalkulator pH</button>
+    <button class="nav-btn" onclick="showSection('peran', this)">🌿 Peran & Fungsi</button>
+    <button class="nav-btn" onclick="showSection('latihan', this)">✏️ Latihan Soal</button>
+    <button class="nav-btn" onclick="showSection('glosarium', this)">📚 Glosarium</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════ BERANDA ═══════════════════ -->
+<section id="home" class="active">
+  <div class="hero">
+    <div class="hero-badge">⚗️ Kimia Kelas XI · IZORY</div>
+    <h1>Larutan<br><span>Penyangga</span></h1>
+    <p>Pelajari bagaimana larutan buffer menjaga keseimbangan pH dalam tubuh, alam, dan industri — secara interaktif dan mendalam.</p>
+    <div class="hero-cards">
+      <div class="hero-card" onclick="showSection('konsep', document.querySelectorAll('.nav-btn')[1])">
+        <div class="hero-card-icon">📖</div>
+        <h3>Konsep Dasar</h3>
+        <p>Apa itu larutan penyangga dan bagaimana cara kerjanya?</p>
+      </div>
+      <div class="hero-card" onclick="showSection('jenis', document.querySelectorAll('.nav-btn')[2])">
+        <div class="hero-card-icon">🧪</div>
+        <h3>Jenis & Prinsip</h3>
+        <p>Penyangga asam, basa, dan mekanisme kerjanya.</p>
+      </div>
+      <div class="hero-card" onclick="showSection('kalkulator', document.querySelectorAll('.nav-btn')[4])">
+        <div class="hero-card-icon">🖩</div>
+        <h3>Kalkulator pH</h3>
+        <p>Hitung pH larutan penyangga secara langsung.</p>
+      </div>
+      <div class="hero-card" onclick="showSection('latihan', document.querySelectorAll('.nav-btn')[6])">
+        <div class="hero-card-icon">✏️</div>
+        <h3>Latihan Soal</h3>
+        <p>Uji pemahaman dengan soal-soal pilihan ganda.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ KONSEP DASAR ═══════════════════ -->
+<section id="konsep">
+  <div class="content">
+    <h2>📖 Konsep <span class="accent">Dasar</span></h2>
+    <p class="section-intro">Larutan penyangga adalah fondasi pemahaman kimia biologis. Tanpanya, tubuh manusia tidak bisa berfungsi normal.</p>
+
+    <div class="card">
+      <h3>🔎 Apa Itu Larutan Penyangga?</h3>
+      <p>Larutan penyangga (<span class="hl">buffer</span> / dapar) adalah larutan yang dapat <span class="hl">mempertahankan nilai pH tertentu</span> walaupun ke dalamnya ditambahkan sedikit asam kuat, sedikit basa kuat, atau dilakukan pengenceran.</p>
+      <br>
+      <p>Dengan kata lain, pH larutan penyangga <strong style="color:var(--text)">tidak akan berubah secara signifikan</strong> meskipun ada gangguan dari luar.</p>
+
+      <div class="think-box" style="margin-top:1.5rem">
+        <div class="think-icon">🤔</div>
+        <div class="think-content">
+          <strong>Berpikir Kritis</strong>
+          <p>Mengapa pH darah manusia harus dijaga di kisaran 7,35–7,45? Apa yang terjadi jika pH keluar dari rentang itu hanya 0,1 unit saja?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🗺️ Peta Konsep</h3>
+      <div class="map-wrap">
+        <div class="map-center">LARUTAN PENYANGGA</div>
+        <div class="map-row">
+          <div class="map-node">📌 Pengertian</div>
+          <div class="map-node">⚙️ Prinsip Kerja</div>
+          <div class="map-node">🧪 Jenis</div>
+          <div class="map-node">🔢 Perhitungan pH</div>
+          <div class="map-node">🌿 Peran</div>
+        </div>
+        <div class="map-row">
+          <div class="map-node acid-node">🔴 Bersifat Asam</div>
+          <div class="map-node base-node">🔵 Bersifat Basa</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📊 Perbandingan: Buffer vs. Bukan Buffer</h3>
+      <table class="rxn-table">
+        <tr><th>Kondisi</th><th>pH Awal</th><th>Ditambah Asam</th><th>Perubahan</th></tr>
+        <tr><td>Air murni</td><td>7,0</td><td>0,01 M HCl</td><td style="color:var(--red)">→ pH 2,0 ❌</td></tr>
+        <tr><td>Larutan Buffer (CH₃COOH/CH₃COO⁻)</td><td>4,74</td><td>0,01 M HCl</td><td style="color:var(--teal)">→ pH 4,66 ✅</td></tr>
+      </table>
+      <div class="think-box">
+        <div class="think-icon">💡</div>
+        <div class="think-content">
+          <strong>Analisis</strong>
+          <p>Air murni turun 5 unit pH, sedangkan larutan buffer hanya berubah 0,08 unit. Ini menunjukkan betapa efektifnya mekanisme penyangga!</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🧱 Komponen Penyusun Larutan Penyangga</h3>
+      <p style="margin-bottom:1rem">Larutan penyangga selalu terdiri dari pasangan:</p>
+      <ul>
+        <li><span class="chip chip-acid">Penyangga Asam</span> → <span class="hl">Asam lemah</span> + <span class="hl">Basa konjugasinya</span> (atau garamnya)</li>
+        <li><span class="chip chip-base">Penyangga Basa</span> → <span class="hl">Basa lemah</span> + <span class="hl">Asam konjugasinya</span> (atau garamnya)</li>
+      </ul>
+      <br>
+      <div class="think-box">
+        <div class="think-icon">🤔</div>
+        <div class="think-content">
+          <strong>Pertanyaan Kritis</strong>
+          <p>Mengapa larutan penyangga harus mengandung PASANGAN asam-basa konjugasi? Apakah bisa hanya asam lemah saja? Pikirkan apa yang terjadi saat basa kuat ditambahkan ke asam lemah murni tanpa garam.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ JENIS & PRINSIP ═══════════════════ -->
+<section id="jenis">
+  <div class="content">
+    <h2>🧪 Jenis & <span class="accent">Prinsip Kerja</span></h2>
+    <p class="section-intro">Dua jenis larutan penyangga — asam dan basa — bekerja dengan mekanisme yang elegan untuk menetralisasi gangguan dari luar.</p>
+
+    <!-- PENYANGGA ASAM -->
+    <div class="card">
+      <h3><span class="chip chip-acid">ASAM</span> Larutan Penyangga Bersifat Asam (pH &lt; 7)</h3>
+      <p>Terdiri dari campuran <span class="hl-acid">asam lemah (HA)</span> dengan <span class="hl">basa konjugasinya (A⁻)</span>.</p>
+      <br>
+      <p><strong style="color:var(--text)">Contoh pasangan:</strong></p>
+      <ul style="margin-top:0.5rem">
+        <li>CH₃COOH (asam asetat) + CH₃COO⁻ (ion asetat) / CH₃COONa</li>
+        <li>HCOOH (asam format) + HCOO⁻ / HCOONa</li>
+        <li>H₂CO₃ + HCO₃⁻</li>
+        <li>H₂PO₄⁻ + HPO₄²⁻</li>
+        <li>HF + F⁻</li>
+      </ul>
+
+      <div class="formula-box" style="margin-top:1.25rem">
+        <span class="formula-label">Kesetimbangan dalam larutan penyangga asam</span>
+        CH₃COOH(aq) ⇌ CH₃COO⁻(aq) + H⁺(aq)
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>⚙️ Prinsip Kerja Penyangga Asam</h3>
+      
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="togglePanel(this)">
+          <span>🧪 Ketika ditambahkan <strong>ASAM KUAT</strong> (H⁺ bertambah)</span>
+          <span class="arrow">▾</span>
+        </button>
+        <div class="toggle-content">
+          <p>Ion H⁺ dari asam kuat akan <span class="hl">bereaksi dengan basa konjugasi</span> (CH₃COO⁻) membentuk asam lemah:</p>
+          <div class="formula-box">CH₃COO⁻(aq) + H⁺(aq) → CH₃COOH(aq)</div>
+          <p>Kesetimbangan bergeser ke <strong style="color:var(--text)">kiri</strong>. Ion H⁺ terserap → pH relatif stabil.</p>
+        </div>
+      </div>
+
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="togglePanel(this)">
+          <span>🧪 Ketika ditambahkan <strong>BASA KUAT</strong> (OH⁻ bertambah)</span>
+          <span class="arrow">▾</span>
+        </button>
+        <div class="toggle-content">
+          <p>Ion OH⁻ dari basa kuat akan <span class="hl">bereaksi dengan asam lemah</span> (CH₃COOH):</p>
+          <div class="formula-box">CH₃COOH(aq) + OH⁻(aq) → CH₃COO⁻(aq) + H₂O(l)</div>
+          <p>Kesetimbangan bergeser ke <strong style="color:var(--text)">kanan</strong>. OH⁻ dinetralisir → pH relatif stabil.</p>
+        </div>
+      </div>
+
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="togglePanel(this)">
+          <span>🧪 Ketika dilakukan <strong>PENGENCERAN</strong></span>
+          <span class="arrow">▾</span>
+        </button>
+        <div class="toggle-content">
+          <p>Derajat ionisasi CH₃COOH bertambah, namun volume larutan juga bertambah. Kedua efek ini saling mengkompensasi sehingga <span class="hl">pH tidak berubah signifikan</span>.</p>
+          <div class="think-box">
+            <div class="think-icon">🤔</div>
+            <div class="think-content">
+              <strong>Berpikir Kritis</strong>
+              <p>Apakah larutan penyangga bisa menjaga pH selamanya? Apa yang terjadi jika asam kuat ditambahkan dalam jumlah sangat besar hingga melampaui "kapasitas buffer"?</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PENYANGGA BASA -->
+    <div class="card">
+      <h3><span class="chip chip-base">BASA</span> Larutan Penyangga Bersifat Basa (pH &gt; 7)</h3>
+      <p>Terdiri dari campuran <span class="hl-base">basa lemah (B)</span> dengan <span class="hl">asam konjugasinya (BH⁺)</span>.</p>
+      <br>
+      <p><strong style="color:var(--text)">Contoh pasangan:</strong></p>
+      <ul style="margin-top:0.5rem">
+        <li>NH₃ (amonia) + NH₄⁺ / NH₄Cl</li>
+        <li>C₆H₅NH₂ (anilin) + C₆H₅NH₃Cl</li>
+      </ul>
+      <div class="formula-box" style="margin-top:1.25rem">
+        <span class="formula-label">Kesetimbangan dalam larutan penyangga basa</span>
+        NH₃(aq) + H₂O(l) ⇌ NH₄⁺(aq) + OH⁻(aq)
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>⚙️ Prinsip Kerja Penyangga Basa</h3>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="togglePanel(this)">
+          <span>🧪 Ketika ditambahkan <strong>ASAM KUAT</strong></span>
+          <span class="arrow">▾</span>
+        </button>
+        <div class="toggle-content">
+          <p>Ion H⁺ bereaksi dengan <span class="hl">basa lemah</span> (NH₃):</p>
+          <div class="formula-box">NH₃(aq) + H⁺(aq) → NH₄⁺(aq)</div>
+          <p>H⁺ diserap, pH dipertahankan.</p>
+        </div>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="togglePanel(this)">
+          <span>🧪 Ketika ditambahkan <strong>BASA KUAT</strong></span>
+          <span class="arrow">▾</span>
+        </button>
+        <div class="toggle-content">
+          <p>Ion OH⁻ bereaksi dengan <span class="hl">asam konjugasi</span> (NH₄⁺):</p>
+          <div class="formula-box">NH₄⁺(aq) + OH⁻(aq) → NH₃(aq) + H₂O(l)</div>
+          <p>OH⁻ dinetralisir, pH dipertahankan.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🏭 Cara Pembuatan Larutan Penyangga</h3>
+      <p style="margin-bottom:1rem"><strong style="color:var(--text)">1. Cara Langsung</strong></p>
+      <ul>
+        <li>Campurkan asam lemah (HA) + garam basa konjugasinya (LA)</li>
+        <li>Campurkan basa lemah (B) + garam asam konjugasinya (BHX)</li>
+      </ul>
+      <div class="formula-box">CH₃COONa + CH₃COOH &nbsp;|&nbsp; NH₄Cl + NH₄OH</div>
+      
+      <p style="margin-bottom:1rem;margin-top:1rem"><strong style="color:var(--text)">2. Cara Tidak Langsung</strong></p>
+      <ul>
+        <li>Asam lemah <span class="hl">berlebih</span> + basa kuat → sisa asam lemah + garam (basa konjugasi)</li>
+        <li>Basa lemah <span class="hl">berlebih</span> + asam kuat → sisa basa lemah + garam (asam konjugasi)</li>
+      </ul>
+      <div class="formula-box">CH₃COOH + NaOH → CH₃COONa + H₂O<br>NH₄OH + HCl → NH₄Cl + H₂O</div>
+
+      <div class="think-box">
+        <div class="think-icon">🧠</div>
+        <div class="think-content">
+          <strong>Pertanyaan Kritis</strong>
+          <p>Mengapa pada cara tidak langsung, asam/basa lemah harus berlebih? Apa yang terjadi jika yang berlebih adalah asam/basa kuat? Apakah campuran masih bersifat buffer?</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ PERHITUNGAN pH ═══════════════════ -->
+<section id="perhitungan">
+  <div class="content">
+    <h2>🔢 Perhitungan <span class="accent">pH</span></h2>
+    <p class="section-intro">Memahami rumus dan langkah-langkah sistematis dalam menghitung pH larutan penyangga.</p>
+
+    <div class="card">
+      <h3>📐 Rumus Larutan Penyangga Asam</h3>
+      <div class="formula-box">
+        <span class="formula-label">Konsentrasi H⁺</span>
+        [H⁺] = Ka × (nₐ / n_bk)
+      </div>
+      <div class="formula-box">
+        <span class="formula-label">Nilai pH</span>
+        pH = –log [H⁺]
+      </div>
+      <p style="margin-top:1rem"><strong style="color:var(--text)">Keterangan:</strong></p>
+      <ul style="margin-top:0.5rem">
+        <li><span class="hl">Ka</span> = tetapan ionisasi asam lemah</li>
+        <li><span class="hl">nₐ</span> = jumlah mol asam lemah</li>
+        <li><span class="hl">n_bk</span> = jumlah mol basa konjugasi (garam)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>📐 Rumus Larutan Penyangga Basa</h3>
+      <div class="formula-box">
+        <span class="formula-label">Konsentrasi OH⁻</span>
+        [OH⁻] = Kb × (n_b / n_ak)
+      </div>
+      <div class="formula-box">
+        <span class="formula-label">Menghitung pH dari pOH</span>
+        pOH = –log [OH⁻] &nbsp;&nbsp;→&nbsp;&nbsp; pH = 14 – pOH
+      </div>
+      <p style="margin-top:1rem"><strong style="color:var(--text)">Keterangan:</strong></p>
+      <ul style="margin-top:0.5rem">
+        <li><span class="hl">Kb</span> = tetapan ionisasi basa lemah</li>
+        <li><span class="hl">n_b</span> = jumlah mol basa lemah</li>
+        <li><span class="hl">n_ak</span> = jumlah mol asam konjugasi (garam)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>📋 Langkah-langkah Menghitung pH</h3>
+      <ol style="color:var(--muted);line-height:2.2;padding-left:1.4rem;font-size:0.95rem">
+        <li>Tentukan mol asam atau basa lemah <span class="hl">(n = M × V)</span></li>
+        <li>Tentukan mol garam / basa atau asam konjugasi</li>
+        <li>Jika ada reaksi (cara tidak langsung), buat <span class="hl">tabel ICE</span> (Initial-Change-Equilibrium)</li>
+        <li>Hitung [H⁺] atau [OH⁻] dengan rumus di atas</li>
+        <li>Hitung pH</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h3>📝 Contoh Soal 1 — Penyangga Asam (Langsung)</h3>
+      <p style="color:var(--muted);margin-bottom:1rem">50 mL CH₃COOH 0,1 M dicampur dengan 50 mL CH₃COONa 0,1 M. Hitung pH! (Ka = 1,8 × 10⁻⁵)</p>
+      
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="togglePanel(this)">
+          <span>💡 Tampilkan Pembahasan</span>
+          <span class="arrow">▾</span>
+        </button>
+        <div class="toggle-content">
+          <div class="step-line">
+            1. nₐ = 50 mL × 0,1 M = <span style="color:var(--teal)">5 mmol</span><br>
+            2. n_bk = 50 mL × 0,1 M = <span style="color:var(--teal)">5 mmol</span><br>
+            3. [H⁺] = 1,8×10⁻⁵ × (5/5) = <span style="color:var(--teal)">1,8 × 10⁻⁵</span><br>
+            4. pH = –log(1,8 × 10⁻⁵)<br>
+               pH = 5 – log 1,8<br>
+               pH ≈ <span style="color:var(--acid);font-size:1.1rem;font-weight:700">4,75</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📝 Contoh Soal 2 — Penyangga Basa (Langsung)</h3>
+      <p style="color:var(--muted);margin-bottom:1rem">50 mL NH₃ 0,1 M + 100 mL NH₄Cl 0,5 M. Hitung pH! (Kb = 10⁻⁵)</p>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="togglePanel(this)">
+          <span>💡 Tampilkan Pembahasan</span>
+          <span class="arrow">▾</span>
+        </button>
+        <div class="toggle-content">
+          <div class="step-line">
+            1. n_b = 50 × 0,1 = <span style="color:var(--teal)">5 mmol</span> (NH₃)<br>
+            2. n_ak = 100 × 0,5 = <span style="color:var(--teal)">50 mmol</span> (NH₄Cl)<br>
+            3. [OH⁻] = 10⁻⁵ × (5/50) = 10⁻⁵ × 0,1 = <span style="color:var(--teal)">10⁻⁶</span><br>
+            4. pOH = –log(10⁻⁶) = 6<br>
+               pH = 14 – 6 = <span style="color:var(--acid);font-size:1.1rem;font-weight:700">8</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📝 Contoh Soal 3 — Reaksi Tidak Langsung (Tabel ICE)</h3>
+      <p style="color:var(--muted);margin-bottom:1rem">200 mL HNO₂ 0,15 M + 150 mL KOH 0,1 M. Hitung pH! (Ka = 10⁻⁵)</p>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="togglePanel(this)">
+          <span>💡 Tampilkan Pembahasan</span>
+          <span class="arrow">▾</span>
+        </button>
+        <div class="toggle-content">
+          <table class="rxn-table" style="margin-bottom:1rem">
+            <tr><th></th><th>HNO₂</th><th>+</th><th>KOH</th><th>→</th><th>KNO₂</th><th>+</th><th>H₂O</th></tr>
+            <tr><td>Awal</td><td>30 mmol</td><td></td><td>15 mmol</td><td></td><td>–</td><td></td><td>–</td></tr>
+            <tr><td>Reaksi</td><td>–15 mmol</td><td></td><td>–15 mmol</td><td></td><td>+15 mmol</td><td></td><td>–</td></tr>
+            <tr><td style="color:var(--teal)">Setimbang</td><td style="color:var(--teal)">15 mmol</td><td></td><td style="color:var(--red)">0</td><td></td><td style="color:var(--teal)">15 mmol</td><td></td><td>–</td></tr>
+          </table>
+          <div class="step-line">
+            Sisa: HNO₂ (asam lemah) + KNO₂ (basa konjugasi) → <span style="color:var(--teal)">Buffer!</span><br><br>
+            [H⁺] = 10⁻⁵ × (15/15) = <span style="color:var(--teal)">10⁻⁵</span><br>
+            pH = <span style="color:var(--acid);font-size:1.1rem;font-weight:700">5</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ KALKULATOR pH ═══════════════════ -->
+<section id="kalkulator">
+  <div class="content">
+    <h2>🖩 Kalkulator <span class="accent">pH Interaktif</span></h2>
+    <p class="section-intro">Masukkan data larutan penyangga untuk menghitung pH secara otomatis — lengkap dengan langkah-langkah penyelesaian.</p>
+
+    <div class="sim-wrapper">
+      <div class="sim-row">
+        <div class="sim-col">
+          <label class="sim-label">Jenis Penyangga</label>
+          <select class="sim-select" id="bufType" onchange="updateBufferUI()">
+            <option value="acid">🔴 Penyangga Asam</option>
+            <option value="base">🔵 Penyangga Basa</option>
+          </select>
+        </div>
+        <div class="sim-col">
+          <label class="sim-label" id="kaLabel">Nilai Ka (asam lemah)</label>
+          <input class="sim-input" type="number" id="kaVal" placeholder="mis. 1.8e-5" value="1.8e-5" step="any">
+        </div>
+      </div>
+      <div class="sim-row">
+        <div class="sim-col">
+          <label class="sim-label" id="weakLabel">Volume asam/basa lemah (mL)</label>
+          <input class="sim-input" type="number" id="volWeak" placeholder="mis. 50" value="50" min="0">
+        </div>
+        <div class="sim-col">
+          <label class="sim-label" id="concWeakLabel">Konsentrasi asam/basa lemah (M)</label>
+          <input class="sim-input" type="number" id="concWeak" placeholder="mis. 0.1" value="0.1" step="any" min="0">
+        </div>
+      </div>
+      <div class="sim-row">
+        <div class="sim-col">
+          <label class="sim-label" id="conjLabel">Volume konjugasi/garam (mL)</label>
+          <input class="sim-input" type="number" id="volConj" placeholder="mis. 50" value="50" min="0">
+        </div>
+        <div class="sim-col">
+          <label class="sim-label">Konsentrasi konjugasi/garam (M)</label>
+          <input class="sim-input" type="number" id="concConj" placeholder="mis. 0.1" value="0.1" step="any" min="0">
+        </div>
+      </div>
+      <button class="sim-btn" onclick="calcPH()">⚗️ Hitung pH</button>
+
+      <div class="ph-result" id="phResult">
+        <div class="ph-label">pH Larutan</div>
+        <div class="ph-value" id="phNum">—</div>
+        <div class="ph-bar-wrap">
+          <div class="ph-bar-track">
+            <div class="ph-indicator" id="phIndicator" style="left:50%"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:0.4rem">
+            <span style="font-size:0.7rem;color:var(--muted)">0 (Asam)</span>
+            <span style="font-size:0.7rem;color:var(--muted)">7 (Netral)</span>
+            <span style="font-size:0.7rem;color:var(--muted)">14 (Basa)</span>
+          </div>
+        </div>
+        <div id="phSifat" style="font-size:0.85rem;margin-bottom:0.5rem;font-weight:600"></div>
+        <div class="ph-steps">
+          <h4>📋 Langkah Penyelesaian</h4>
+          <div class="step-line" id="phSteps"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>💡 Tips Menggunakan Kalkulator</h3>
+      <ul>
+        <li>Masukkan Ka atau Kb dalam notasi ilmiah, mis. <span class="hl">1.8e-5</span> untuk 1,8 × 10⁻⁵</li>
+        <li>Pastikan mol asam/basa lemah &gt; 0 dan mol konjugasi &gt; 0</li>
+        <li>Rumus ini berlaku untuk campuran langsung (asam lemah + garam)</li>
+        <li>Untuk campuran tidak langsung, hitung reaksi terlebih dahulu di kertas</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ PERAN & FUNGSI ═══════════════════ -->
+<section id="peran">
+  <div class="content">
+    <h2>🌿 Peran & <span class="accent">Fungsi</span></h2>
+    <p class="section-intro">Larutan penyangga bukan sekadar konsep kimia — ia hadir di setiap sel tubuh kamu dan di berbagai industri modern.</p>
+
+    <div class="card">
+      <h3>🩸 1. Larutan Penyangga dalam Tubuh Makhluk Hidup</h3>
+      <p style="margin-bottom:1rem">Terdapat dalam <span class="hl">cairan intrasel</span> dan <span class="hl">cairan ekstrasel</span>. Tanpa penyangga, tubuh mengalami asidosis atau alkalosis.</p>
+
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="togglePanel(this)">
+          <span>🫀 Penyangga Karbonat (dalam Darah)</span>
+          <span class="arrow">▾</span>
+        </button>
+        <div class="toggle-content">
+          <p>Terdiri dari <span class="hl">H₂CO₃</span> dan <span class="hl">HCO₃⁻</span>, menjaga pH darah di kisaran <strong style="color:var(--text)">7,35–7,45</strong>.</p>
+          <div class="formula-box" style="margin-top:0.75rem">
+            pH turun → HCO₃⁻(aq) + H⁺(aq) ⇌ H₂CO₃(aq)<br>
+            pH naik → H₂CO₃(aq) + OH⁻(aq) ⇌ HCO₃⁻(aq) + H₂O(l)
+          </div>
+        </div>
+      </div>
+
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="togglePanel(this)">
+          <span>🧬 Penyangga Fosfat (seluruh cairan tubuh)</span>
+          <span class="arrow">▾</span>
+        </button>
+        <div class="toggle-content">
+          <p>Terdiri dari <span class="hl">H₂PO₄⁻</span> dan <span class="hl">HPO₄²⁻</span>, penting dalam cairan intrasel dan urin.</p>
+          <div class="formula-box" style="margin-top:0.75rem">
+            pH turun → HPO₄²⁻(aq) + H⁺(aq) ⇌ H₂PO₄⁻(aq)<br>
+            pH naik → H₂PO₄⁻(aq) + OH⁻(aq) ⇌ HPO₄²⁻(aq) + H₂O(l)
+          </div>
+        </div>
+      </div>
+
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="togglePanel(this)">
+          <span>🔴 Penyangga Hemoglobin (dalam darah)</span>
+          <span class="arrow">▾</span>
+        </button>
+        <div class="toggle-content">
+          <p>Terdiri dari <span class="hl">HHb</span> (asam hemoglobin) dan <span class="hl">HbO₂</span>. Berperan dalam transportasi oksigen sekaligus penyangga pH.</p>
+          <div class="formula-box" style="margin-top:0.75rem">
+            HHb(aq) + O₂(aq) ⇌ HbO₂⁻(aq) + H⁺(aq)
+          </div>
+        </div>
+      </div>
+
+      <div class="think-box">
+        <div class="think-icon">🚨</div>
+        <div class="think-content">
+          <strong>Kondisi Kritis</strong>
+          <p><strong style="color:var(--red)">Asidosis</strong>: pH darah turun (< 7,35) akibat diabetes melitus, penyakit ginjal, atau diare.<br>
+          <strong style="color:var(--blue)">Alkalosis</strong>: pH darah naik (> 7,45) akibat kekurangan oksigen atau CO₂ yang dilepas terlalu banyak.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🌱 2. Hidroponik</h3>
+      <p>Setiap jenis tanaman membutuhkan pH tertentu untuk tumbuh optimal. Larutan penyangga menjaga pH air nutrisi agar tanaman tidak stres.</p>
+    </div>
+
+    <div class="card">
+      <h3>💊 3. Obat-obatan & Farmasi</h3>
+      <p>Aspirin (asam asetilsalisilat) mengandung asam yang bisa mengubah pH lambung. Ditambahkan MgO sebagai penyangga. Dalam industri farmasi, penyangga fosfat digunakan untuk menjaga pH obat-obatan agar tetap aktif dan aman.</p>
+    </div>
+
+    <div class="card">
+      <h3>🔬 4. Aplikasi Lainnya</h3>
+      <ul>
+        <li><strong style="color:var(--text)">Mikrobiologi Industri</strong> — menjaga pH medium pertumbuhan mikroorganisme</li>
+        <li><strong style="color:var(--text)">Biologi</strong> — mengoptimalkan kerja enzim (enzim sensitif terhadap pH)</li>
+        <li><strong style="color:var(--text)">Analisis Kimia</strong> — analisis kualitatif & kuantitatif, reaksi dengan pH terkontrol</li>
+        <li><strong style="color:var(--text)">Kultur Jaringan</strong> — media pertumbuhan sel membutuhkan pH stabil</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ LATIHAN SOAL ═══════════════════ -->
+<section id="latihan">
+  <div class="content">
+    <h2>✏️ Latihan <span class="accent">Soal</span></h2>
+    <p class="section-intro">Uji pemahamanmu dengan 10 soal pilihan ganda yang mencakup seluruh materi larutan penyangga. Setiap jawaban disertai penjelasan!</p>
+
+    <div class="quiz-progress" id="qProgress"></div>
+    <div id="quizArea"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ GLOSARIUM ═══════════════════ -->
+<section id="glosarium">
+  <div class="content">
+    <h2>📚 <span class="accent">Glosarium</span></h2>
+    <p class="section-intro">Kumpulan istilah penting dalam topik larutan penyangga.</p>
+    <div class="gloss-grid">
+      <div class="gloss-item"><div class="gloss-term">Larutan Penyangga (Buffer)</div><div class="gloss-def">Larutan yang mampu mempertahankan pH tertentu meskipun ditambah asam kuat, basa kuat, atau diencerkan.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Asam Lemah</div><div class="gloss-def">Senyawa asam yang dalam larutan hanya terionisasi sebagian. Contoh: CH₃COOH, HF, HCOOH.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Basa Lemah</div><div class="gloss-def">Senyawa basa yang dalam larutan hanya terionisasi sebagian. Contoh: NH₃, C₆H₅NH₂.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Asam Konjugasi</div><div class="gloss-def">Spesi yang terbentuk ketika basa menerima proton (H⁺). Contoh: NH₄⁺ adalah asam konjugasi dari NH₃.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Basa Konjugasi</div><div class="gloss-def">Spesi yang terbentuk ketika asam melepas proton (H⁺). Contoh: CH₃COO⁻ adalah basa konjugasi dari CH₃COOH.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Ka (Tetapan Ionisasi Asam)</div><div class="gloss-def">Ukuran kekuatan asam lemah. Semakin besar Ka, semakin kuat asamnya.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Kb (Tetapan Ionisasi Basa)</div><div class="gloss-def">Ukuran kekuatan basa lemah. Semakin besar Kb, semakin kuat basanya.</div></div>
+      <div class="gloss-item"><div class="gloss-term">pH</div><div class="gloss-def">Ukuran keasaman larutan. pH = –log[H⁺]. Skala 0–14, netral = 7.</div></div>
+      <div class="gloss-item"><div class="gloss-term">pOH</div><div class="gloss-def">Ukuran kebasaan larutan. pOH = –log[OH⁻]. Hubungan: pH + pOH = 14.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Asidosis</div><div class="gloss-def">Kondisi penurunan pH darah di bawah normal (< 7,35), disebabkan metabolisme berlebih, penyakit ginjal, atau diare.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Alkalosis</div><div class="gloss-def">Kondisi peningkatan pH darah di atas normal (> 7,45), disebabkan kekurangan CO₂ atau oksigen.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Kapasitas Buffer</div><div class="gloss-def">Kemampuan maksimum larutan penyangga menetralisasi asam atau basa sebelum pH berubah signifikan.</div></div>
+    </div>
+  </div>
+</section>
+
+<script>
+// ═══ NAVIGATION ═══
+function showSection(id, btn) {
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(btn) btn.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ═══ TOGGLE PANELS ═══
+function togglePanel(btn) {
+  btn.classList.toggle('open');
+  const content = btn.nextElementSibling;
+  content.classList.toggle('open');
+}
+
+// ═══ BUFFER UI UPDATE ═══
+function updateBufferUI() {
+  const type = document.getElementById('bufType').value;
+  document.getElementById('kaLabel').textContent = type === 'acid' ? 'Nilai Ka (asam lemah)' : 'Nilai Kb (basa lemah)';
+  document.getElementById('weakLabel').textContent = type === 'acid' ? 'Volume asam lemah (mL)' : 'Volume basa lemah (mL)';
+  document.getElementById('concWeakLabel').textContent = type === 'acid' ? 'Konsentrasi asam lemah (M)' : 'Konsentrasi basa lemah (M)';
+  document.getElementById('conjLabel').textContent = type === 'acid' ? 'Volume basa konjugasi/garam (mL)' : 'Volume asam konjugasi/garam (mL)';
+}
+
+// ═══ CALC pH ═══
+function calcPH() {
+  const type   = document.getElementById('bufType').value;
+  const Ka     = parseFloat(document.getElementById('kaVal').value);
+  const vWeak  = parseFloat(document.getElementById('volWeak').value);
+  const cWeak  = parseFloat(document.getElementById('concWeak').value);
+  const vConj  = parseFloat(document.getElementById('volConj').value);
+  const cConj  = parseFloat(document.getElementById('concConj').value);
+
+  if([Ka,vWeak,cWeak,vConj,cConj].some(v=>isNaN(v)||v<0)) {
+    alert('Masukkan nilai yang valid untuk semua kolom!'); return;
+  }
+
+  const nWeak = vWeak * cWeak;
+  const nConj = vConj * cConj;
+
+  if(nConj === 0) { alert('Mol konjugasi tidak boleh nol!'); return; }
+
+  let ph, steps, sifat;
+
+  if(type === 'acid') {
+    const hplus = Ka * (nWeak / nConj);
+    ph = -Math.log10(hplus);
+    steps = `mol asam lemah (nₐ) = ${vWeak} mL × ${cWeak} M = ${nWeak.toFixed(4)} mmol\n` +
+            `mol basa konjugasi (n_bk) = ${vConj} mL × ${cConj} M = ${nConj.toFixed(4)} mmol\n\n` +
+            `[H⁺] = Ka × (nₐ / n_bk)\n` +
+            `[H⁺] = ${Ka.toExponential(2)} × (${nWeak.toFixed(4)} / ${nConj.toFixed(4)})\n` +
+            `[H⁺] = ${hplus.toExponential(4)}\n\n` +
+            `pH = –log[H⁺]\n` +
+            `pH = –log(${hplus.toExponential(4)})\n` +
+            `pH = ${ph.toFixed(3)}`;
+    sifat = ph < 7 ? `🔴 Bersifat ASAM (pH = ${ph.toFixed(2)})` : `🔵 Bersifat BASA (pH = ${ph.toFixed(2)})`;
+  } else {
+    const ohm = Ka * (nWeak / nConj);
+    const poh = -Math.log10(ohm);
+    ph = 14 - poh;
+    steps = `mol basa lemah (n_b) = ${vWeak} mL × ${cWeak} M = ${nWeak.toFixed(4)} mmol\n` +
+            `mol asam konjugasi (n_ak) = ${vConj} mL × ${cConj} M = ${nConj.toFixed(4)} mmol\n\n` +
+            `[OH⁻] = Kb × (n_b / n_ak)\n` +
+            `[OH⁻] = ${Ka.toExponential(2)} × (${nWeak.toFixed(4)} / ${nConj.toFixed(4)})\n` +
+            `[OH⁻] = ${ohm.toExponential(4)}\n\n` +
+            `pOH = –log[OH⁻] = ${poh.toFixed(3)}\n` +
+            `pH = 14 – pOH = 14 – ${poh.toFixed(3)}\n` +
+            `pH = ${ph.toFixed(3)}`;
+    sifat = `🔵 Bersifat BASA (pH = ${ph.toFixed(2)})`;
+  }
+
+  const resultEl = document.getElementById('phResult');
+  resultEl.classList.add('show');
+
+  document.getElementById('phNum').textContent = ph.toFixed(2);
+  document.getElementById('phSifat').textContent = sifat;
+  document.getElementById('phSifat').style.color = ph < 7 ? '#ff4d6d' : '#6ea8fe';
+  document.getElementById('phSteps').textContent = steps;
+
+  // Move indicator
+  const pct = Math.min(Math.max(ph / 14, 0), 1) * 100;
+  document.getElementById('phIndicator').style.left = pct + '%';
+
+  // Color the pH number
+  const phEl = document.getElementById('phNum');
+  if(ph < 5) phEl.style.color = '#ff4d6d';
+  else if(ph < 7) phEl.style.color = '#ff8c42';
+  else if(ph === 7) phEl.style.color = '#00c9a7';
+  else phEl.style.color = '#6ea8fe';
+}
+
+// ═══ QUIZ ═══
+const questions = [
+  {
+    q: "Larutan penyangga adalah larutan yang...",
+    opts: ["Memiliki pH 7 tepat","Mampu mempertahankan pH meskipun ditambah asam/basa kuat","Hanya tersusun dari asam kuat dan garamnya","Tidak mengandung ion H⁺"],
+    ans: 1,
+    explain: "Larutan penyangga (buffer) adalah larutan yang dapat mempertahankan pH tertentu meskipun ditambahkan sedikit asam kuat, basa kuat, atau diencerkan. pH-nya tidak harus 7 — bisa asam atau basa."
+  },
+  {
+    q: "Pasangan berikut yang membentuk larutan penyangga adalah...",
+    opts: ["HCl dan NaCl","CH₃COOH dan CH₃COONa","NaOH dan NaCl","H₂SO₄ dan Na₂SO₄"],
+    ans: 1,
+    explain: "CH₃COOH (asam lemah) + CH₃COONa (garam/basa konjugasi) adalah pasangan buffer asam klasik. HCl dan H₂SO₄ adalah asam kuat — tidak membentuk buffer."
+  },
+  {
+    q: "Larutan penyangga bersifat basa terdiri dari...",
+    opts: ["Asam kuat + basa kuat","Asam lemah + garamnya","Basa lemah + asam konjugasinya","Asam lemah + asam kuat"],
+    ans: 2,
+    explain: "Penyangga basa tersusun dari basa lemah + asam konjugasinya (atau garamnya). Contoh: NH₃ + NH₄Cl. Basa lemah menetralisasi asam yang masuk, asam konjugasi menetralisasi basa yang masuk."
+  },
+  {
+    q: "Campuran 50 mL CH₃COOH 0,1 M dan 50 mL CH₃COONa 0,1 M memiliki [H⁺] = ...\n(Ka CH₃COOH = 1,8 × 10⁻⁵)",
+    opts: ["1,8 × 10⁻⁵","3,6 × 10⁻⁵","0,9 × 10⁻⁵","1,8 × 10⁻⁴"],
+    ans: 0,
+    explain: "nₐ = nₓ = 5 mmol (sama). [H⁺] = Ka × (nₐ/n_bk) = 1,8×10⁻⁵ × (5/5) = 1,8×10⁻⁵. Karena mol asam = mol basa konjugasi, [H⁺] = Ka."
+  },
+  {
+    q: "pH darah normal manusia berada pada kisaran...",
+    opts: ["3,0 – 4,0","6,5 – 7,0","7,35 – 7,45","8,0 – 9,0"],
+    ans: 2,
+    explain: "pH darah normal manusia adalah 7,35–7,45. Di luar kisaran ini, tubuh mengalami asidosis (< 7,35) atau alkalosis (> 7,45) yang dapat merusak jaringan dan organ."
+  },
+  {
+    q: "Ketika basa kuat (NaOH) ditambahkan ke larutan penyangga CH₃COOH/CH₃COO⁻, yang terjadi adalah...",
+    opts: ["CH₃COO⁻ bereaksi dengan OH⁻ membentuk CH₃COOH","CH₃COOH bereaksi dengan OH⁻ membentuk CH₃COO⁻ + H₂O","pH berubah drastis","H⁺ bertambah banyak"],
+    ans: 1,
+    explain: "OH⁻ dari NaOH dinetralisir oleh komponen asam lemah (CH₃COOH): CH₃COOH + OH⁻ → CH₃COO⁻ + H₂O. Ini menjaga konsentrasi H⁺ dan mempertahankan pH."
+  },
+  {
+    q: "Larutan penyangga fosfat dalam tubuh tersusun dari...",
+    opts: ["H₂CO₃ dan HCO₃⁻","H₂PO₄⁻ dan HPO₄²⁻","HHb dan HbO₂","NH₃ dan NH₄⁺"],
+    ans: 1,
+    explain: "Penyangga fosfat tersusun dari H₂PO₄⁻ dan HPO₄²⁻, terdapat di seluruh cairan tubuh. Penyangga karbonat (H₂CO₃/HCO₃⁻) dan hemoglobin (HHb/HbO₂) ada di darah."
+  },
+  {
+    q: "Untuk membuat buffer dari 100 mL NH₃ 0,1 M dengan cara tidak langsung, maka yang dicampurkan adalah...",
+    opts: ["HCl berlebih","NaOH berlebih","HCl tidak berlebih (agar NH₃ tersisa)","Air murni"],
+    ans: 2,
+    explain: "Cara tidak langsung: basa lemah (NH₃) direaksikan dengan asam kuat (HCl), tapi NH₃ harus berlebih agar tersisa NH₃ (basa lemah) + NH₄Cl (asam konjugasi) = buffer! Jika HCl berlebih, tidak ada sisa basa lemah → bukan buffer."
+  },
+  {
+    q: "Asidosis disebabkan oleh...",
+    opts: ["Peningkatan pH darah akibat kekurangan oksigen","Penurunan pH darah akibat metabolisme berlebih, penyakit ginjal, diare","Kelebihan ion OH⁻ dalam darah","Bertambahnya kadar oksigen dalam darah"],
+    ans: 1,
+    explain: "Asidosis = penurunan pH darah (< 7,35). Disebabkan metabolisme tubuh terlalu tinggi karena diabetes melitus, diare, penyakit ginjal, atau konsumsi protein berlebih. Alkalosis adalah kebalikannya (pH naik)."
+  },
+  {
+    q: "100 mL larutan mengandung NH₃ dan NH₄Cl masing-masing 0,1 M. Berapa pH-nya? (Kb = 10⁻⁵)",
+    opts: ["5","7","9","11"],
+    ans: 2,
+    explain: "n_b = n_ak = 10 mmol. [OH⁻] = 10⁻⁵ × (10/10) = 10⁻⁵. pOH = 5. pH = 14 – 5 = 9. Karena mol basa lemah = mol asam konjugasi, [OH⁻] = Kb."
+  }
+];
+
+let currentQ = 0;
+let answered = [];
+let score = 0;
+
+function initQuiz() {
+  answered = new Array(questions.length).fill(null);
+  score = 0; currentQ = 0;
+  renderProgress();
+  renderQuestion();
+}
+
+function renderProgress() {
+  const el = document.getElementById('qProgress');
+  el.innerHTML = answered.map((a,i) =>
+    `<div class="q-dot ${a===null?'':(a===questions[i].ans?'done':'wrong')}"></div>`
+  ).join('');
+}
+
+function renderQuestion() {
+  const area = document.getElementById('quizArea');
+  if(currentQ >= questions.length) {
+    const pct = Math.round((score/questions.length)*100);
+    const grade = pct>=90?'Baik Sekali 🏆':pct>=80?'Baik 👍':pct>=70?'Cukup 📚':'Perlu Mengulang 💪';
+    area.innerHTML = `
+      <div class="quiz-score-wrap">
+        <div style="font-size:3rem;margin-bottom:0.5rem">🎉</div>
+        <div class="quiz-score-num">${score}/${questions.length}</div>
+        <p>${grade} — Skor kamu ${pct}%</p>
+        <p style="font-size:0.85rem;margin-bottom:1.5rem">${pct>=80?'Kamu sudah menguasai materi larutan penyangga!':'Pelajari lagi materi yang belum dikuasai ya!'}</p>
+        <button class="quiz-btn" onclick="initQuiz()">🔄 Ulangi Latihan</button>
+      </div>`;
+    return;
+  }
+  const q = questions[currentQ];
+  area.innerHTML = `
+    <div class="quiz-card">
+      <div class="quiz-meta">Soal ${currentQ+1} dari ${questions.length}</div>
+      <div class="quiz-q">${q.q.replace(/\n/g,'<br>')}</div>
+      <div class="quiz-opts">
+        ${q.opts.map((o,i)=>`
+          <div class="quiz-opt" id="opt${i}" onclick="selectOpt(${i})">
+            <span class="opt-key">${String.fromCharCode(65+i)}</span>
+            <span>${o}</span>
+          </div>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="feedback"></div>
+      <div class="quiz-nav">
+        <span class="quiz-counter">Benar: ${score} | Soal: ${currentQ+1}/${questions.length}</span>
+        <div style="display:flex;gap:0.5rem">
+          ${currentQ>0?`<button class="quiz-btn secondary" onclick="goQ(${currentQ-1})">← Sebelumnya</button>`:''}
+          <button class="quiz-btn" id="nextBtn" onclick="goQ(${currentQ+1})" style="display:none">Selanjutnya →</button>
+        </div>
+      </div>
+    </div>`;
+  // restore answered state
+  if(answered[currentQ] !== null) {
+    selectOpt(answered[currentQ], true);
+  }
+}
+
+function selectOpt(idx, restore=false) {
+  const q = questions[currentQ];
+  if(answered[currentQ] !== null && !restore) return;
+  if(!restore) {
+    answered[currentQ] = idx;
+    if(idx === q.ans) score++;
+  }
+  // style opts
+  q.opts.forEach((_,i)=>{
+    const el = document.getElementById('opt'+i);
+    if(i === q.ans) el.classList.add('correct');
+    else if(i === idx && idx !== q.ans) el.classList.add('wrong-opt');
+    el.onclick = null;
+  });
+  // feedback
+  const fb = document.getElementById('feedback');
+  const correct = idx === q.ans;
+  fb.className = `quiz-feedback show ${correct?'correct-fb':'wrong-fb'}`;
+  fb.innerHTML = `<strong>${correct?'✅ Benar!':'❌ Kurang Tepat'}</strong><br>${q.explain}`;
+  document.getElementById('nextBtn').style.display = 'inline-block';
+  renderProgress();
+}
+
+function goQ(idx) {
+  currentQ = Math.min(Math.max(idx,0), questions.length);
+  renderQuestion();
+}
+
+// Init quiz on load
+initQuiz();
+</script>
+</body>
+</html>
