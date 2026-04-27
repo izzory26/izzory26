@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulasi Titrasi — CH₃COOH × NaOH</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0f14;
+    --bg2: #13161e;
+    --bg3: #1a1e2a;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --text: #e8eaf0;
+    --text2: #8b90a0;
+    --text3: #555b6e;
+    --accent: #4f9cf9;
+    --accent2: #7dd3fc;
+    --green: #34d399;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --purple: #a78bfa;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-mono: 'DM Mono', 'Courier New', monospace;
+  }
+
+  html { font-size: 16px; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(79,156,249,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,156,249,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Glow orbs */
+  body::after {
+    content: '';
+    position: fixed;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(79,156,249,0.06) 0%, transparent 70%);
+    top: -200px; left: -200px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .glow-orb2 {
+    position: fixed;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(167,139,250,0.05) 0%, transparent 70%);
+    bottom: -200px; right: -100px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+
+  /* Header */
+  header {
+    padding: 40px 0 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .lab-badge {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid rgba(79,156,249,0.3);
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 10px;
+    background: rgba(79,156,249,0.06);
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 46px);
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent2);
+  }
+
+  .subtitle {
+    font-size: 12px;
+    color: var(--text2);
+    margin-top: 8px;
+    letter-spacing: 0.04em;
+  }
+
+  /* Main layout */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .main-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Panels */
+  .panel {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .panel-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .panel-header::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  .panel-body { padding: 20px; }
+
+  /* Controls */
+  .ctrl-group { margin-bottom: 22px; }
+
+  .ctrl-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+
+  .ctrl-name {
+    font-size: 11px;
+    color: var(--text2);
+    letter-spacing: 0.06em;
+  }
+
+  .ctrl-value {
+    font-size: 13px;
+    color: var(--accent2);
+    font-weight: 500;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 3px;
+    background: var(--bg3);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px rgba(79,156,249,0.6);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  input[type=range]:hover::-webkit-slider-thumb {
+    transform: scale(1.2);
+    box-shadow: 0 0 20px rgba(79,156,249,0.8);
+  }
+
+  /* Stat cards */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    transition: border-color 0.3s;
+  }
+
+  .stat-card.highlight { border-color: rgba(79,156,249,0.4); }
+
+  .stat-lbl {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 4px;
+  }
+
+  .stat-num {
+    font-size: 22px;
+    font-weight: 500;
+    font-family: var(--font-display);
+    transition: color 0.4s;
+  }
+
+  /* Phase indicator */
+  .phase-bar {
+    background: var(--bg3);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    border-left: 3px solid var(--accent);
+    transition: border-color 0.4s;
+  }
+
+  .phase-title {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .phase-eq {
+    font-size: 10px;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  /* Buttons */
+  .btn-group { display: flex; flex-direction: column; gap: 8px; }
+
+  .btn {
+    width: 100%;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn:hover { background: var(--bg3); border-color: var(--accent); color: var(--accent2); }
+  .btn.primary { background: rgba(79,156,249,0.15); border-color: rgba(79,156,249,0.4); color: var(--accent2); }
+  .btn.primary:hover { background: rgba(79,156,249,0.25); }
+  .btn.active { background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.4); color: var(--green); }
+
+  .btn-row2 { display: flex; gap: 8px; margin-top: 8px; }
+  .btn-row2 .btn { font-size: 10px; padding: 8px 12px; }
+
+  /* Toggle group */
+  .toggle-group { display: flex; gap: 6px; margin-top: 8px; }
+  .toggle { flex: 1; padding: 7px; font-size: 10px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text3); cursor: pointer; font-family: var(--font-mono); transition: all 0.2s; text-align: center; letter-spacing: 0.04em; }
+  .toggle.on { border-color: rgba(79,156,249,0.4); color: var(--accent2); background: rgba(79,156,249,0.08); }
+
+  /* Right panel */
+  .right-col { display: flex; flex-direction: column; gap: 20px; }
+
+  /* Chart */
+  .chart-wrap {
+    position: relative;
+    width: 100%;
+    height: 340px;
+  }
+
+  /* Beakers */
+  .beaker-row {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 28px;
+    padding: 20px 0 0;
+  }
+
+  .beaker-col { text-align: center; }
+
+  .beaker-svg { display: block; margin: 0 auto; }
+
+  .beaker-label {
+    font-size: 10px;
+    color: var(--text3);
+    margin-top: 8px;
+    letter-spacing: 0.04em;
+  }
+
+  .arrow-col {
+    font-size: 24px;
+    color: var(--text3);
+    padding-bottom: 40px;
+    opacity: 0.5;
+  }
+
+  /* pH scale bar */
+  .ph-scale-wrap { padding: 0 4px; }
+
+  .ph-scale-bar {
+    height: 20px;
+    border-radius: 10px;
+    background: linear-gradient(to right,
+      #dc2626 0%, #f97316 10%, #facc15 20%, #84cc16 30%,
+      #22c55e 40%, #0ea5e9 55%, #3b82f6 65%, #8b5cf6 80%, #7c3aed 100%);
+    position: relative;
+    margin-bottom: 4px;
+  }
+
+  .ph-cursor {
+    position: absolute;
+    top: -5px;
+    width: 3px;
+    height: 30px;
+    background: white;
+    border-radius: 2px;
+    transform: translateX(-50%);
+    transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 0 8px rgba(255,255,255,0.6);
+  }
+
+  .ph-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: var(--text3);
+    padding: 0 2px;
+  }
+
+  /* Info footer */
+  .info-strip {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+  }
+
+  .info-item { }
+  .info-item .k { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); margin-bottom: 2px; }
+  .info-item .v { font-size: 13px; color: var(--text2); }
+  .info-item .v span { color: var(--accent2); }
+
+  /* Animations */
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.7); }
+  }
+
+  .live-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse-dot 1.5s ease-in-out infinite;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in { animation: fadeIn 0.5s ease forwards; }
+
+  /* Drop animation for beaker liquid */
+  @keyframes ripple {
+    0% { transform: scaleX(1); opacity: 0.6; }
+    100% { transform: scaleX(1.04); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb2"></div>
+
+<div class="container">
+  <header>
+    <div class="header-top">
+      <div>
+        <div class="lab-badge">Virtual Chemistry Lab</div>
+        <h1>Simulasi Titrasi<br><em>CH₃COOH × NaOH</em></h1>
+        <p class="subtitle">Asam Asetat (Asam Lemah) + Natrium Hidroksida (Basa Kuat) &mdash; Interaktif & Animasi</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding-top:8px;">
+        <div class="live-dot"></div>
+        <span style="font-size:10px;color:var(--text3);letter-spacing:0.08em;">REAL-TIME</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="main-grid">
+    <!-- LEFT: Controls -->
+    <div>
+      <div class="panel" style="margin-bottom:16px;">
+        <div class="panel-header">Parameter Titrasi</div>
+        <div class="panel-body">
+
+          <div class="stats-grid">
+            <div class="stat-card highlight" id="card-ph">
+              <div class="stat-lbl">pH Saat Ini</div>
+              <div class="stat-num" id="stat-ph" style="color:var(--red)">2.65</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-lbl">pKa</div>
+              <div class="stat-num" id="stat-pka" style="color:var(--amber)">5.00</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-lbl">Vol Titik Ekivalen</div>
+              <div class="stat-num" style="color:var(--green)">10 mL</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-lbl">pH Titik Ekivalen</div>
+              <div class="stat-num" id="stat-ph-te" style="color:var(--green)">9.20</div>
+            </div>
+          </div>
+
+          <!-- Phase bar -->
+          <div class="phase-bar" id="phase-bar">
+            <div class="phase-title" id="phase-title">Larutan Asam Murni</div>
+            <div class="phase-eq" id="phase-eq">pH = ½(pKa − log Cₐ)</div>
+          </div>
+
+          <!-- pH scale -->
+          <div class="ph-scale-wrap" style="margin-bottom:20px;">
+            <div class="ph-scale-bar">
+              <div class="ph-cursor" id="ph-cursor" style="left:18.9%"></div>
+            </div>
+            <div class="ph-labels">
+              <span>0</span><span>2</span><span>4</span><span>6</span><span>7</span>
+              <span>8</span><span>10</span><span>12</span><span>14</span>
+            </div>
+          </div>
+
+          <!-- Sliders -->
+          <div class="ctrl-group">
+            <div class="ctrl-label">
+              <span class="ctrl-name">Ka (10<sup style="font-size:9px">−x</sup>)</span>
+              <span class="ctrl-value">10<sup id="ka-disp">−5</sup></span>
+            </div>
+            <input type="range" id="ka-exp" min="3" max="7" step="0.5" value="5">
+            <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:4px;">
+              <span>10⁻³ (kuat)</span><span>10⁻⁷ (lemah)</span>
+            </div>
+          </div>
+
+          <div class="ctrl-group">
+            <div class="ctrl-label">
+              <span class="ctrl-name">Konsentrasi Asam</span>
+              <span class="ctrl-value" id="conc-disp">0.5 M</span>
+            </div>
+            <input type="range" id="conc" min="0.1" max="1.0" step="0.1" value="0.5">
+          </div>
+
+          <div class="ctrl-group">
+            <div class="ctrl-label">
+              <span class="ctrl-name">Volume NaOH Ditambahkan</span>
+              <span class="ctrl-value" id="vol-disp">0.0 mL</span>
+            </div>
+            <input type="range" id="vol-naoh" min="0" max="15" step="0.5" value="0">
+          </div>
+
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">Kontrol Animasi</div>
+        <div class="panel-body">
+          <div class="btn-group">
+            <button class="btn primary" id="btn-animate">▶&nbsp;&nbsp;Mulai Animasi Titrasi</button>
+            <button class="btn" id="btn-reset">↺&nbsp;&nbsp;Reset ke Awal</button>
+          </div>
+
+          <div style="margin-top:16px;font-size:10px;color:var(--text3);margin-bottom:8px;letter-spacing:0.06em;">TAMPILKAN DI GRAFIK</div>
+          <div class="toggle-group">
+            <div class="toggle on" id="tog-pka" onclick="toggleOpt('pka')">garis pKa</div>
+            <div class="toggle on" id="tog-te" onclick="toggleOpt('te')">titik ekivalen</div>
+            <div class="toggle on" id="tog-buf" onclick="toggleOpt('buf')">zona buffer</div>
+          </div>
+
+          <div style="margin-top:16px;">
+            <div style="font-size:10px;color:var(--text3);margin-bottom:8px;letter-spacing:0.06em;">KECEPATAN ANIMASI</div>
+            <div class="toggle-group">
+              <div class="toggle" id="spd-slow" onclick="setSpeed(300,'slow')">lambat</div>
+              <div class="toggle on" id="spd-med" onclick="setSpeed(150,'med')">normal</div>
+              <div class="toggle" id="spd-fast" onclick="setSpeed(60,'fast')">cepat</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Chart + Beakers -->
+    <div class="right-col">
+
+      <div class="panel">
+        <div class="panel-header">Kurva Titrasi — pH vs Volume NaOH</div>
+        <div class="panel-body" style="padding-bottom:16px;">
+          <div class="chart-wrap">
+            <canvas id="titrasiChart" role="img" aria-label="Kurva titrasi CH3COOH dengan NaOH menampilkan perubahan pH terhadap volume NaOH ditambahkan.">Grafik kurva titrasi asam asetat dengan natrium hidroksida.</canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">Visualisasi Beaker</div>
+        <div class="panel-body">
+          <div class="beaker-row">
+            <!-- Asam -->
+            <div class="beaker-col">
+              <svg class="beaker-svg" width="80" height="110" viewBox="0 0 80 110">
+                <defs>
+                  <clipPath id="clip-acid">
+                    <rect x="8" y="8" width="64" height="90" rx="4"/>
+                  </clipPath>
+                </defs>
+                <rect id="liq-acid" x="8" y="28" width="64" height="70" clip-path="url(#clip-acid)" fill="#bfdbfe" opacity="0.5"/>
+                <rect x="8" y="8" width="64" height="90" rx="4" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+                <line x1="6" y1="8" x2="74" y2="8" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+                <text x="40" y="55" text-anchor="middle" font-size="9" fill="#93c5fd" font-family="'DM Mono',monospace">CH₃COOH</text>
+                <text x="40" y="68" text-anchor="middle" font-size="8" fill="#60a5fa" font-family="'DM Mono',monospace" id="acid-conc">0.5 M</text>
+                <text x="40" y="80" text-anchor="middle" font-size="8" fill="#60a5fa" font-family="'DM Mono',monospace">10 mL</text>
+              </svg>
+              <div class="beaker-label">Asam Asetat</div>
+            </div>
+
+            <div class="arrow-col">+</div>
+
+            <!-- Basa -->
+            <div class="beaker-col">
+              <svg class="beaker-svg" width="80" height="110" viewBox="0 0 80 110">
+                <defs>
+                  <clipPath id="clip-base">
+                    <rect x="8" y="8" width="64" height="90" rx="4"/>
+                  </clipPath>
+                </defs>
+                <rect id="liq-base" x="8" y="88" width="64" height="10" clip-path="url(#clip-base)" fill="#fca5a5" opacity="0.5" style="transition: y 0.4s, height 0.4s"/>
+                <rect x="8" y="8" width="64" height="90" rx="4" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+                <line x1="6" y1="8" x2="74" y2="8" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+                <text x="40" y="42" text-anchor="middle" font-size="9" fill="#fca5a5" font-family="'DM Mono',monospace">NaOH</text>
+                <text x="40" y="54" text-anchor="middle" font-size="8" fill="#f87171" font-family="'DM Mono',monospace" id="base-conc">0.5 M</text>
+                <text x="40" y="66" text-anchor="middle" font-size="10" fill="#f87171" font-family="'DM Mono',monospace" font-weight="500" id="base-vol-text">0 mL</text>
+              </svg>
+              <div class="beaker-label" id="base-beaker-lbl">NaOH (0 mL)</div>
+            </div>
+
+            <div class="arrow-col">→</div>
+
+            <!-- Campuran -->
+            <div class="beaker-col">
+              <svg class="beaker-svg" width="90" height="120" viewBox="0 0 90 120">
+                <defs>
+                  <clipPath id="clip-mix">
+                    <path d="M8 8 L8 94 Q8 102 16 102 L74 102 Q82 102 82 94 L82 8 Z"/>
+                  </clipPath>
+                </defs>
+                <rect id="liq-mix" x="8" y="22" width="74" height="80" clip-path="url(#clip-mix)" fill="#6ee7b7" opacity="0.3" style="transition: fill 0.6s"/>
+                <path d="M8 8 L8 94 Q8 102 16 102 L74 102 Q82 102 82 94 L82 8 Z" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+                <line x1="6" y1="8" x2="84" y2="8" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+                <text id="mix-ph-big" x="45" y="62" text-anchor="middle" font-size="16" fill="#34d399" font-family="'Fraunces',serif" font-weight="600">2.65</text>
+                <text x="45" y="76" text-anchor="middle" font-size="8" fill="#6ee7b7" font-family="'DM Mono',monospace" opacity="0.7">pH</text>
+                <text id="mix-vol" x="45" y="92" text-anchor="middle" font-size="8" fill="#6ee7b7" font-family="'DM Mono',monospace" opacity="0.7">10 mL</text>
+              </svg>
+              <div class="beaker-label">Campuran</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info strip -->
+      <div class="info-strip">
+        <div class="info-item">
+          <div class="k">Mol CH₃COOH awal</div>
+          <div class="v" id="info-mol-acid"><span>5.00</span> mmol</div>
+        </div>
+        <div class="info-item">
+          <div class="k">Mol NaOH ditambahkan</div>
+          <div class="v" id="info-mol-base"><span>0.00</span> mmol</div>
+        </div>
+        <div class="info-item">
+          <div class="k">Mol CH₃COO⁻ terbentuk</div>
+          <div class="v" id="info-mol-salt"><span>0.00</span> mmol</div>
+        </div>
+        <div class="info-item">
+          <div class="k">Volume total larutan</div>
+          <div class="v" id="info-vol-total"><span>10.0</span> mL</div>
+        </div>
+        <div class="info-item">
+          <div class="k">Konstanta disosiasi</div>
+          <div class="v" id="info-ka">Ka = <span>1.00 × 10⁻⁵</span></div>
+        </div>
+        <div class="info-item">
+          <div class="k">Rumus yang digunakan</div>
+          <div class="v" id="info-formula"><span>pH = ½(pKa − log Ca)</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+Chart.register(window['chartjs-plugin-annotation']);
+
+const kaInput = document.getElementById('ka-exp');
+const concInput = document.getElementById('conc');
+const volInput = document.getElementById('vol-naoh');
+let animTimer = null;
+let animSpeed = 150;
+let showPka = true, showTe = true, showBuf = true;
+let chart;
+
+function calcPH(vol, Ka, conc) {
+  const mol_asam = 10 * conc / 1000;
+  const mol_naoh = vol * conc / 1000;
+  const V_total = (10 + vol) / 1000;
+  const pKa = -Math.log10(Ka);
+  if (vol === 0) {
+    const Ca = mol_asam / V_total;
+    return -Math.log10(Math.sqrt(Ka * Ca));
+  } else if (mol_naoh < mol_asam - 1e-10) {
+    return pKa + Math.log10(mol_naoh / (mol_asam - mol_naoh));
+  } else if (Math.abs(mol_naoh - mol_asam) < 1e-9) {
+    const Kb = 1e-14 / Ka;
+    const OH = Math.sqrt(Kb * mol_asam / V_total);
+    return 14 + Math.log10(OH);
+  } else {
+    const C_OH = (mol_naoh - mol_asam) / V_total;
+    return 14 + Math.log10(C_OH);
+  }
+}
+
+function phToColor(pH) {
+  if (pH < 2) return '#ef4444';
+  if (pH < 4) return '#f97316';
+  if (pH < 6) return '#eab308';
+  if (pH < 7) return '#84cc16';
+  if (pH < 7.5) return '#22c55e';
+  if (pH < 9) return '#34d399';
+  if (pH < 11) return '#22d3ee';
+  if (pH < 13) return '#818cf8';
+  return '#a78bfa';
+}
+
+function phToLiqFill(pH) {
+  if (pH < 3) return '#fca5a5';
+  if (pH < 5) return '#fdba74';
+  if (pH < 6.5) return '#fde68a';
+  if (pH < 7.5) return '#bbf7d0';
+  if (pH < 9) return '#6ee7b7';
+  if (pH < 11) return '#7dd3fc';
+  return '#a5b4fc';
+}
+
+function buildData(Ka, conc) {
+  const labels = [], data = [];
+  for (let v = 0; v <= 15; v += 0.25) {
+    labels.push(v.toFixed(2));
+    data.push(parseFloat(calcPH(v, Ka, conc).toFixed(3)));
+  }
+  return { labels, data };
+}
+
+function initChart() {
+  const Ka = Math.pow(10, -parseFloat(kaInput.value));
+  const conc = parseFloat(concInput.value);
+  const vol = parseFloat(volInput.value);
+  const pKa = -Math.log10(Ka);
+  const { labels, data } = buildData(Ka, conc);
+  const tePH = calcPH(10, Ka, conc);
+
+  const closestIdx = Math.round(vol / 0.25);
+  const pointR = data.map((_, i) => i === closestIdx ? 7 : 0);
+  const pointBg = data.map((_, i) => i === closestIdx ? '#fff' : 'transparent');
+  const pointBorder = data.map((_, i) => i === closestIdx ? phToColor(data[i]) : 'transparent');
+
+  const annotations = {};
+
+  if (showPka) {
+    annotations.pkaLine = {
+      type: 'line', yMin: pKa, yMax: pKa,
+      borderColor: 'rgba(251,191,36,0.5)', borderWidth: 1.5, borderDash: [6, 4],
+      label: {
+        content: `pKa = ${pKa.toFixed(2)}`,
+        display: true, position: 'start',
+        font: { size: 10, family: "'DM Mono',monospace" },
+        color: '#fbbf24', backgroundColor: 'rgba(251,191,36,0.08)',
+        padding: { x: 6, y: 3 }, borderRadius: 4
+      }
+    };
+  }
+
+  if (showTe) {
+    annotations.teLine = {
+      type: 'line', xMin: '10.00', xMax: '10.00',
+      borderColor: 'rgba(52,211,153,0.5)', borderWidth: 1.5, borderDash: [6, 4],
+      label: {
+        content: `TE: pH ${tePH.toFixed(2)}`,
+        display: true, position: 'start',
+        font: { size: 10, family: "'DM Mono',monospace" },
+        color: '#34d399', backgroundColor: 'rgba(52,211,153,0.08)',
+        padding: { x: 6, y: 3 }, borderRadius: 4
+      }
+    };
+  }
+
+  if (showBuf) {
+    annotations.bufBox = {
+      type: 'box',
+      xMin: '1.00', xMax: '9.00',
+      yMin: pKa - 1, yMax: pKa + 1,
+      backgroundColor: 'rgba(167,139,250,0.04)',
+      borderColor: 'rgba(167,139,250,0.2)',
+      borderWidth: 1,
+      label: {
+        content: 'zona buffer',
+        display: true, position: { x: 'start', y: 'center' },
+        font: { size: 9, family: "'DM Mono',monospace" },
+        color: 'rgba(167,139,250,0.6)', backgroundColor: 'transparent'
+      }
+    };
+  }
+
+  const cfg = {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'pH',
+        data,
+        borderColor: '#4f9cf9',
+        borderWidth: 2.5,
+        pointRadius: pointR,
+        pointBackgroundColor: pointBg,
+        pointBorderColor: pointBorder,
+        pointBorderWidth: 2,
+        tension: 0.4,
+        fill: false
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 300 },
+      plugins: {
+        legend: { display: false },
+        annotation: { annotations },
+        tooltip: {
+          callbacks: {
+            title: ctx => `Vol NaOH: ${parseFloat(ctx[0].label).toFixed(1)} mL`,
+            label: ctx => `pH = ${ctx.parsed.y.toFixed(2)}`
+          },
+          backgroundColor: '#1a1e2a',
+          titleColor: '#8b90a0',
+          bodyColor: '#e8eaf0',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          padding: 10,
+          titleFont: { family: "'DM Mono',monospace", size: 11 },
+          bodyFont: { family: "'DM Mono',monospace", size: 13, weight: '500' }
+        }
+      },
+      scales: {
+        y: {
+          min: 0, max: 14, stepSize: 2,
+          grid: { color: 'rgba(255,255,255,0.04)', drawTicks: false },
+          border: { color: 'transparent' },
+          ticks: {
+            color: '#555b6e',
+            font: { family: "'DM Mono',monospace", size: 10 },
+            padding: 8
+          },
+          title: {
+            display: true, text: 'pH',
+            color: '#555b6e',
+            font: { family: "'DM Mono',monospace", size: 11 }
+          }
+        },
+        x: {
+          grid: { color: 'rgba(255,255,255,0.04)', drawTicks: false },
+          border: { color: 'transparent' },
+          ticks: {
+            color: '#555b6e',
+            font: { family: "'DM Mono',monospace", size: 10 },
+            maxTicksLimit: 9, autoSkip: true, padding: 8,
+            callback: v => parseFloat(v) % 1 === 0 ? v : null
+          },
+          title: {
+            display: true, text: 'Volume NaOH (mL)',
+            color: '#555b6e',
+            font: { family: "'DM Mono',monospace", size: 11 }
+          }
+        }
+      }
+    }
+  };
+
+  if (chart) { chart.destroy(); }
+  chart = new Chart(document.getElementById('titrasiChart'), cfg);
+}
+
+function updateAll() {
+  const kaExp = parseFloat(kaInput.value);
+  const Ka = Math.pow(10, -kaExp);
+  const conc = parseFloat(concInput.value);
+  const vol = parseFloat(volInput.value);
+  const pKa = -Math.log10(Ka);
+  const mol_asam = 10 * conc / 1000;
+  const mol_naoh = vol * conc / 1000;
+  const V_total = (10 + vol) / 1000;
+  const pH = calcPH(vol, Ka, conc);
+  const tePH = calcPH(10, Ka, conc);
+
+  // UI updates
+  document.getElementById('ka-disp').textContent = `−${kaExp}`;
+  document.getElementById('conc-disp').textContent = `${conc.toFixed(1)} M`;
+  document.getElementById('vol-disp').textContent = `${vol.toFixed(1)} mL`;
+
+  const phEl = document.getElementById('stat-ph');
+  phEl.textContent = pH.toFixed(2);
+  phEl.style.color = phToColor(pH);
+
+  document.getElementById('stat-pka').textContent = pKa.toFixed(2);
+  document.getElementById('stat-ph-te').textContent = tePH.toFixed(2);
+
+  // pH cursor
+  const pct = (pH / 14) * 100;
+  document.getElementById('ph-cursor').style.left = `${pct}%`;
+
+  // Phase bar
+  const phaseBar = document.getElementById('phase-bar');
+  let phaseTitle, phaseEq, phaseColor, formula;
+  if (vol === 0) {
+    phaseTitle = 'Larutan Asam Murni';
+    phaseEq = `[H⁺] = √(Ka × Ca) → pH = ${pH.toFixed(2)}`;
+    phaseColor = 'var(--red)';
+    formula = 'pH = ½(pKa − log Ca)';
+  } else if (mol_naoh < mol_asam - 1e-9) {
+    phaseTitle = 'Daerah Buffer (Henderson-Hasselbalch)';
+    const ratio = (mol_naoh / (mol_asam - mol_naoh)).toFixed(3);
+    phaseEq = `pH = ${pKa.toFixed(2)} + log(${(mol_naoh*1000).toFixed(2)}/${((mol_asam-mol_naoh)*1000).toFixed(2)}) = ${pH.toFixed(2)}`;
+    phaseColor = 'var(--amber)';
+    formula = 'pH = pKa + log([A⁻]/[HA])';
+  } else if (Math.abs(mol_naoh - mol_asam) < 1e-9) {
+    phaseTitle = '★ Titik Ekivalen — Hidrolisis Garam';
+    phaseEq = `CH₃COO⁻ + H₂O ⇌ CH₃COOH + OH⁻ → pH = ${pH.toFixed(2)}`;
+    phaseColor = 'var(--green)';
+    formula = 'pH = 7 + ½(pKa + log Cs)';
+  } else {
+    phaseTitle = 'Kelebihan NaOH (Basa Kuat)';
+    const excess = mol_naoh - mol_asam;
+    phaseEq = `[OH⁻] = ${(excess/V_total*1000).toFixed(3)} mM → pOH = ${(-Math.log10(excess/V_total)).toFixed(2)} → pH = ${pH.toFixed(2)}`;
+    phaseColor = 'var(--purple)';
+    formula = 'pH = 14 − pOH';
+  }
+  phaseBar.style.borderLeftColor = phaseColor;
+  document.getElementById('phase-title').textContent = phaseTitle;
+  document.getElementById('phase-eq').textContent = phaseEq;
+
+  // Beakers
+  const acidConcEl = document.getElementById('acid-conc');
+  if (acidConcEl) acidConcEl.textContent = `${conc.toFixed(1)} M`;
+
+  const baseEl = document.getElementById('liq-base');
+  const baseH = Math.min(vol / 15, 1) * 70;
+  const baseY = 88 - baseH;
+  baseEl.setAttribute('y', baseY.toFixed(1));
+  baseEl.setAttribute('height', (baseH + 10).toFixed(1));
+  document.getElementById('base-vol-text').textContent = `${vol.toFixed(1)} mL`;
+  document.getElementById('base-beaker-lbl').textContent = `NaOH (${vol.toFixed(1)} mL)`;
+
+  const mixEl = document.getElementById('liq-mix');
+  mixEl.setAttribute('fill', phToLiqFill(pH));
+  const mixPct = Math.min((10 + vol) / 25, 0.95);
+  const mixY = 102 - mixPct * 94;
+  mixEl.setAttribute('y', mixY.toFixed(1));
+  mixEl.setAttribute('height', (mixPct * 94).toFixed(1));
+
+  const mixPhBig = document.getElementById('mix-ph-big');
+  mixPhBig.textContent = pH.toFixed(2);
+  mixPhBig.setAttribute('fill', phToColor(pH));
+
+  document.getElementById('mix-vol').textContent = `${(10 + vol).toFixed(1)} mL`;
+
+  // Info strip
+  document.getElementById('info-mol-acid').innerHTML = `<span>${(mol_asam*1000).toFixed(2)}</span> mmol`;
+  document.getElementById('info-mol-base').innerHTML = `<span>${(mol_naoh*1000).toFixed(2)}</span> mmol`;
+  const molSalt = Math.min(mol_naoh, mol_asam);
+  document.getElementById('info-mol-salt').innerHTML = `<span>${(molSalt*1000).toFixed(2)}</span> mmol`;
+  document.getElementById('info-vol-total').innerHTML = `<span>${((10+vol).toFixed(1))}</span> mL`;
+  document.getElementById('info-ka').innerHTML = `Ka = <span>10⁻${kaExp}</span>`;
+  document.getElementById('info-formula').innerHTML = `<span>${formula}</span>`;
+
+  initChart();
+}
+
+function toggleOpt(opt) {
+  if (opt === 'pka') { showPka = !showPka; document.getElementById('tog-pka').classList.toggle('on', showPka); }
+  if (opt === 'te') { showTe = !showTe; document.getElementById('tog-te').classList.toggle('on', showTe); }
+  if (opt === 'buf') { showBuf = !showBuf; document.getElementById('tog-buf').classList.toggle('on', showBuf); }
+  updateAll();
+}
+
+function setSpeed(ms, id) {
+  animSpeed = ms;
+  ['slow','med','fast'].forEach(s => document.getElementById('spd-'+s).classList.remove('on'));
+  document.getElementById('spd-'+id).classList.add('on');
+}
+
+document.getElementById('btn-animate').addEventListener('click', function() {
+  if (animTimer) {
+    clearInterval(animTimer);
+    animTimer = null;
+    this.textContent = '▶  Mulai Animasi Titrasi';
+    this.classList.remove('active');
+    return;
+  }
+  this.textContent = '⏸  Pause Animasi';
+  this.classList.add('active');
+  volInput.value = 0;
+  updateAll();
+  let v = 0;
+  animTimer = setInterval(() => {
+    v += 0.5;
+    if (v > 15) {
+      clearInterval(animTimer);
+      animTimer = null;
+      document.getElementById('btn-animate').textContent = '▶  Mulai Animasi Titrasi';
+      document.getElementById('btn-animate').classList.remove('active');
+      return;
+    }
+    volInput.value = v;
+    updateAll();
+  }, animSpeed);
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  if (animTimer) { clearInterval(animTimer); animTimer = null; }
+  document.getElementById('btn-animate').textContent = '▶  Mulai Animasi Titrasi';
+  document.getElementById('btn-animate').classList.remove('active');
+  kaInput.value = 5;
+  concInput.value = 0.5;
+  volInput.value = 0;
+  updateAll();
+});
+
+[kaInput, concInput, volInput].forEach(el => el.addEventListener('input', updateAll));
+
+updateAll();
+</script>
+</body>
+</html>
